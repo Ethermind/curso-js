@@ -31,6 +31,10 @@ class Board {
         this.matrix = m;
     }
 
+    piece(column, row){
+        return board.matrix[row][column].piece;
+    }
+
     move(piece, column, row) {
         this.matrix[row][column].piece = piece;
         this.matrix[piece.cell.x][piece.cell.y].piece = null;
@@ -151,25 +155,24 @@ while (!exit) {
     const piecePosition = promptCoordinates("Select piece");
 
     if (piecePosition !== null) {
-        const piece = board.matrix[piecePosition.row][piecePosition.column].piece;
+        const piece = board.piece(piecePosition.column, piecePosition.row);
 
         if (piece === null) {
             console.log("Cell is empty!");
         }
         else {
             if (piece.color === color) {
-                const pieceDestiny = promptCoordinates(`Select where to move ${piece.constructor.name}`);
+                const destiny = promptCoordinates(`Select where to move ${piece.constructor.name}`);
 
-                if (pieceDestiny !== '') {
-                    board.move(piece, pieceDestiny.column, pieceDestiny.row);
+                if (destiny !== '') {
+                    board.move(piece, destiny.column, destiny.row);
                     console.clear();
                     board.print();
                 } else {
                     exit = true;
                 }
 
-                color = switchColor(color);
-
+                color = switchTurn(color);
             } else {
                 console.log(`Incorrect turn for ${piece.color}!`);
             }
@@ -222,7 +225,7 @@ function promptCoordinates(text) {
     return null;
 }
 
-function switchColor(color) {
+function switchTurn(color) {
     if (color === PieceColor.WHITE) {
         return PieceColor.BLACK;
     }
