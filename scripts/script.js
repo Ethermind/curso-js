@@ -9,21 +9,24 @@ const letterToColumn = {
     h: 7,
 };
 
+const BoardSize = {
+    ROWS: 8,
+    COLS: 8,
+}
+
 const PieceColor = {
     WHITE: "WHITE",
     BLACK: "BLACK"
 }
 
 class Board {
-    ROWS = 8;
-    COLS = 8;
 
     constructor() {
         let m = [];
 
-        for (let i = 0; i < this.ROWS; i++) {
+        for (let i = 0; i < BoardSize.ROWS; i++) {
             m[i] = [];
-            for (let j = 0; j < this.COLS; j++) {
+            for (let j = 0; j < BoardSize.COLS; j++) {
                 m[i][j] = new Cell(this, i, j);
             }
         }
@@ -47,7 +50,7 @@ class Board {
     }
 
     print() {
-        for (let i = 0; i < this.ROWS; i++) {
+        for (let i = 0; i < BoardSize.ROWS; i++) {
             console.log("  ---------------------------------");
             this.printRow(i);
         }
@@ -58,7 +61,7 @@ class Board {
     printRow(row) {
         let result = "|";
 
-        for (let j = 0; j < this.COLS; j++) {
+        for (let j = 0; j < BoardSize.COLS; j++) {
             result = result + this.matrix[row][j].print() + "|";
         }
 
@@ -85,8 +88,6 @@ class Cell {
 }
 
 class Piece {
-    #moved = false;
-
     constructor(color, cell) {
         this.color = color;
         this.cell = cell;
@@ -100,10 +101,6 @@ class Piece {
         // Check if the movement is correct
         // Not if the movement is valid
         return false;
-    }
-
-    setAsMoved() {
-        this.#moved = true;
     }
 }
 
@@ -204,7 +201,7 @@ function buildBoard() {
     board.addPiece(Knight, PieceColor.WHITE, 7, 6);
     board.addPiece(Rook, PieceColor.WHITE, 7, 7);
 
-    for (i = 0; i < 8; i++) {
+    for (i = 0; i < BoardSize.COLS; i++) {
         board.addPiece(Pawn, PieceColor.BLACK, 1, i);
         board.addPiece(Pawn, PieceColor.WHITE, 6, i);
     }
