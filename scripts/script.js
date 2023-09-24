@@ -1,9 +1,9 @@
-// _________ .__
-// \_   ___ \|  |__   ____   ______ ______
-// /    \  \/|  |  \_/ __ \ /  ___//  ___/
-// \     \___|   Y  \  ___/ \___ \ \___ \
-//  \______  /___|  /\___  >____  >____  >
-//         \/     \/     \/     \/     \/   version 0.1
+// _________            .___                     _________   ___ ______________ _________ _________
+// \_   ___ \  ____   __| _/___________          \_   ___ \ /   |   \_   _____//   _____//   _____/
+// /    \  \/ /  _ \ / __ |/ __ \_  __ \  ______ /    \  \//    ~    \    __)_ \_____  \ \_____  \
+// \     \___(  <_> ) /_/ \  ___/|  | \/ /_____/ \     \___\    Y    /        \/        \/        \
+//  \______  /\____/\____ |\___  >__|             \______  /\___|_  /_______  /_______  /_______  /
+//         \/            \/    \/                        \/       \/        \/        \/        \/
 //
 // Simula un tablero de ajedrez.
 //
@@ -16,6 +16,8 @@
 // - Separacion de capa de presentacion y logica de negocio
 // - Lista con los movimientos realizados utilizando notacion algebraica:
 //   https://www.chess.com/es/article/view/notacion-de-ajedrez-el-lenguaje-del-ajedrez
+//
+// Motivo: necesidad de utilizar vectores y/o operar sobre una matriz
 //
 // Adicionalmente a lo visto en el curso se incluye:
 //
