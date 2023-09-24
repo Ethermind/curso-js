@@ -1,3 +1,33 @@
+// _________ .__
+// \_   ___ \|  |__   ____   ______ ______
+// /    \  \/|  |  \_/ __ \ /  ___//  ___/
+// \     \___|   Y  \  ___/ \___ \ \___ \
+//  \______  /___|  /\___  >____  >____  >
+//         \/     \/     \/     \/     \/   version 0.1
+//
+// Simula un tablero de ajedrez.
+//
+// En esta entrega no se incluye:
+//
+// - Validaciones de movimientos de piezas (incluyendo enroque y comer al paso)
+// - Deteccion de Jaque y Jaque mate
+// - Deteccion de Tablas por repeticion
+// - Deteccion de Tablas por falta de piezas
+// - Separacion de capa de presentacion y logica de negocio
+//
+// Adicionalmente a lo visto en el curso se incluye:
+//
+// - Uso de una matriz como tablero
+//
+
+const logInfo = (text) => {
+    console.log(`%c${text}`, "font-family: 'Courier New', Courier, monospace");
+}
+
+const logError = (text) => {
+    console.log(`%c${text}`, "color: red");
+}
+
 const letterToColumn = {
     a: 0,
     b: 1,
@@ -20,7 +50,6 @@ const PieceColor = {
 }
 
 class Board {
-
     constructor() {
         let m = [];
 
@@ -34,7 +63,7 @@ class Board {
         this.matrix = m;
     }
 
-    piece(column, row){
+    piece(column, row) {
         return board.matrix[row][column].piece;
     }
 
@@ -51,23 +80,22 @@ class Board {
 
     print() {
         for (let i = 0; i < BoardSize.ROWS; i++) {
-            console.log("  ---------------------------------");
-            this.printRow(i);
+            logInfo("  ---------------------------------");
+            logInfo(this.printableRank(i));
         }
-        console.log("  ---------------------------------");
-        console.log("    a   b   c   d   e   f   g   h  ");
+
+        logInfo("  ---------------------------------");
+        logInfo("    a   b   c   d   e   f   g   h  ");
     }
 
-    printRow(row) {
+    printableRank(row) {
         let result = "|";
 
         for (let j = 0; j < BoardSize.COLS; j++) {
             result = result + this.matrix[row][j].print() + "|";
         }
 
-        console.log(`${8 - row} ${result}`);
-
-        return result;
+        return `${8 - row} ${result}`;
     }
 }
 
@@ -88,56 +116,48 @@ class Cell {
 }
 
 class Piece {
+    symbol = "";
+
     constructor(color, cell) {
         this.color = color;
         this.cell = cell;
     }
 
-    print() {
-        return null;
+    symbolByColor() {
+        if (this.color === PieceColor.WHITE) {
+            return this.symbol.toUpperCase();
+        }
+
+        return this.symbol.toLowerCase();
     }
 
-    canMove(x, y) {
-        // Check if the movement is correct
-        // Not if the movement is valid
-        return false;
+    print() {
+        return ` ${this.symbolByColor()} `;
     }
 }
 
 class Pawn extends Piece {
-    print() {
-        return " P ";
-    }
+    symbol = "P";
 }
 
 class Knight extends Piece {
-    print() {
-        return " N ";
-    }
+    symbol = "N";
 }
 
 class Rook extends Piece {
-    print() {
-        return " R ";
-    }
+    symbol = "R";
 }
 
 class Bishop extends Piece {
-    print() {
-        return " B ";
-    }
+    symbol = "B";
 }
 
 class Queen extends Piece {
-    print() {
-        return " Q ";
-    }
+    symbol = "Q";
 }
 
 class King extends Piece {
-    print() {
-        return " K ";
-    }
+    symbol = "K";
 }
 
 const board = buildBoard();
@@ -155,7 +175,7 @@ while (!exit) {
         const piece = board.piece(piecePosition.column, piecePosition.row);
 
         if (piece === null) {
-            console.log("Cell is empty!");
+            logError("Cell is empty!");
         }
         else {
             if (piece.color === color) {
@@ -171,7 +191,7 @@ while (!exit) {
 
                 color = switchTurn(color);
             } else {
-                console.log(`Incorrect turn for ${piece.color}!`);
+                logError(`Incorrect turn for ${piece.color}!`);
             }
         }
     } else {
@@ -179,7 +199,7 @@ while (!exit) {
     }
 }
 
-console.log("GAME OVER");
+logInfo("GAME OVER");
 
 function buildBoard() {
     const board = new Board();
@@ -212,7 +232,7 @@ function buildBoard() {
 function promptCoordinates(text) {
     const piecePosition = prompt(text);
 
-    if (piecePosition !== "") {
+    if (piecePosition !== null && piecePosition !== "") {
         return {
             column: letterToColumn[piecePosition[0]],
             row: 8 - parseInt(piecePosition[1]),
@@ -223,9 +243,5 @@ function promptCoordinates(text) {
 }
 
 function switchTurn(color) {
-    if (color === PieceColor.WHITE) {
-        return PieceColor.BLACK;
-    }
-
-    return PieceColor.WHITE;
+    return (color === PieceColor.WHITE) ? PieceColor.BLACK : PieceColor.WHITE;
 }
