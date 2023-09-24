@@ -14,11 +14,19 @@
 // - Deteccion de Tablas por repeticion
 // - Deteccion de Tablas por falta de piezas
 // - Separacion de capa de presentacion y logica de negocio
+// - Lista con los movimientos realizados utilizando notacion algebraica:
+//   https://www.chess.com/es/article/view/notacion-de-ajedrez-el-lenguaje-del-ajedrez
 //
 // Adicionalmente a lo visto en el curso se incluye:
 //
 // - Uso de una matriz como tablero
 //
+
+const RANK_8 = 0;
+const RANK_7 = 1;
+const RANK_2 = 6;
+const RANK_1 = 7;
+
 
 const logInfo = (text) => {
     console.log(`%c${text}`, "font-family: 'Courier New', Courier, monospace");
@@ -160,6 +168,66 @@ class King extends Piece {
     symbol = "K";
 }
 
+// La inicializacion del tablero se realizara luego utilizando notacion FEN.
+// https://www.chess.com/es/blog/NosdeChess/la-notacion-fen-en-ajedrez-la-conoces
+function buildBoard() {
+    const board = new Board();
+
+    board.addPiece(Rook, PieceColor.BLACK, RANK_8, 0);
+    board.addPiece(Knight, PieceColor.BLACK, RANK_8, 1);
+    board.addPiece(Bishop, PieceColor.BLACK, RANK_8, 2);
+    board.addPiece(Queen, PieceColor.BLACK, RANK_8, 3);
+    board.addPiece(King, PieceColor.BLACK, RANK_8, 4);
+    board.addPiece(Bishop, PieceColor.BLACK, RANK_8, 5);
+    board.addPiece(Knight, PieceColor.BLACK, RANK_8, 6);
+    board.addPiece(Rook, PieceColor.BLACK, RANK_8, 7);
+    board.addPiece(Rook, PieceColor.WHITE, RANK_1, 0);
+    board.addPiece(Knight, PieceColor.WHITE, RANK_1, 1);
+    board.addPiece(Bishop, PieceColor.WHITE, RANK_1, 2);
+    board.addPiece(Queen, PieceColor.WHITE, RANK_1, 3);
+    board.addPiece(King, PieceColor.WHITE, RANK_1, 4);
+    board.addPiece(Bishop, PieceColor.WHITE, RANK_1, 5);
+    board.addPiece(Knight, PieceColor.WHITE, RANK_1, 6);
+    board.addPiece(Rook, PieceColor.WHITE, RANK_1, 7);
+
+    for (i = 0; i < BoardSize.COLS; i++) {
+        board.addPiece(Pawn, PieceColor.BLACK, RANK_7, i);
+        board.addPiece(Pawn, PieceColor.WHITE, RANK_2, i);
+    }
+
+    return board;
+}
+
+function promptCoordinates(text) {
+    const piecePosition = prompt(text);
+
+    if (piecePosition !== null && piecePosition !== "") {
+        return {
+            column: letterToColumn[piecePosition[0]],
+            row: 8 - parseInt(piecePosition[1]),
+        }
+    }
+
+    return null;
+}
+
+function switchTurn(color) {
+    return (color === PieceColor.WHITE) ? PieceColor.BLACK : PieceColor.WHITE;
+}
+
+//-----------------------------------------------------------------------------------------------------
+//
+// GAME SIMULATOR
+//
+//-----------------------------------------------------------------------------------------------------
+
+//
+// Se debera ingresar la coordenada de la pieza y el destino de la misma en un segundo prompt
+// Ejemplo:
+// Al iniciar, ingresando e2 se selecciona el peon de rey.
+// Luego, seleccionando e4 lo movera a la casilla indicada.
+//
+
 const board = buildBoard();
 let exit = false;
 let color = PieceColor.WHITE;
@@ -200,48 +268,3 @@ while (!exit) {
 }
 
 logInfo("GAME OVER");
-
-function buildBoard() {
-    const board = new Board();
-
-    board.addPiece(Rook, PieceColor.BLACK, 0, 0);
-    board.addPiece(Knight, PieceColor.BLACK, 0, 1);
-    board.addPiece(Bishop, PieceColor.BLACK, 0, 2);
-    board.addPiece(Queen, PieceColor.BLACK, 0, 3);
-    board.addPiece(King, PieceColor.BLACK, 0, 4);
-    board.addPiece(Bishop, PieceColor.BLACK, 0, 5);
-    board.addPiece(Knight, PieceColor.BLACK, 0, 6);
-    board.addPiece(Rook, PieceColor.BLACK, 0, 7);
-    board.addPiece(Rook, PieceColor.WHITE, 7, 0);
-    board.addPiece(Knight, PieceColor.WHITE, 7, 1);
-    board.addPiece(Bishop, PieceColor.WHITE, 7, 2);
-    board.addPiece(Queen, PieceColor.WHITE, 7, 3);
-    board.addPiece(King, PieceColor.WHITE, 7, 4);
-    board.addPiece(Bishop, PieceColor.WHITE, 7, 5);
-    board.addPiece(Knight, PieceColor.WHITE, 7, 6);
-    board.addPiece(Rook, PieceColor.WHITE, 7, 7);
-
-    for (i = 0; i < BoardSize.COLS; i++) {
-        board.addPiece(Pawn, PieceColor.BLACK, 1, i);
-        board.addPiece(Pawn, PieceColor.WHITE, 6, i);
-    }
-
-    return board;
-}
-
-function promptCoordinates(text) {
-    const piecePosition = prompt(text);
-
-    if (piecePosition !== null && piecePosition !== "") {
-        return {
-            column: letterToColumn[piecePosition[0]],
-            row: 8 - parseInt(piecePosition[1]),
-        }
-    }
-
-    return null;
-}
-
-function switchTurn(color) {
-    return (color === PieceColor.WHITE) ? PieceColor.BLACK : PieceColor.WHITE;
-}
