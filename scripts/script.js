@@ -6,6 +6,7 @@
 //         \/            \/    \/                        \/       \/        \/        \/        \/
 //
 // Simula un tablero de ajedrez.
+// Inspirado en: https://chessboardjs.com/ y https://github.com/jhlywa/chess.js
 //
 // En esta entrega no se incluye:
 //
@@ -200,10 +201,16 @@ function buildBoard() {
     return board;
 }
 
+function validCoordinates(text) {
+    const pattern = /^[a-h][1-8]$/;
+
+    return pattern.test(text);
+}
+
 function promptCoordinates(text) {
     const piecePosition = prompt(text);
 
-    if (piecePosition !== null && piecePosition !== "") {
+    if (validCoordinates(piecePosition)) {
         return {
             column: letterToColumn[piecePosition[0]],
             row: 8 - parseInt(piecePosition[1]),
@@ -223,17 +230,19 @@ function switchTurn(color) {
 //
 //-----------------------------------------------------------------------------------------------------
 
-//
-// Se debera ingresar la coordenada de la pieza y el destino de la misma en un segundo prompt
-// Ejemplo:
-// Al iniciar, ingresando e2 se selecciona el peon de rey.
-// Luego, seleccionando e4 lo movera a la casilla indicada.
-//
-
 const board = buildBoard();
 let exit = false;
 let color = PieceColor.WHITE;
+const instructions = `
 
+Se debera ingresar la coordenada de la pieza y el destino de la misma en un segundo prompt
+Ejemplo:
+Al iniciar, ingresando e2 se selecciona el peon de rey.
+Luego, seleccionando e4 lo movera a la casilla indicada.
+
+`;
+
+alert(instructions);
 console.clear();
 board.print();
 
