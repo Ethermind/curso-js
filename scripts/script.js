@@ -10,19 +10,13 @@
 //
 // En esta entrega no se incluye:
 //
-// - Validaciones de movimientos de piezas (incluyendo enroque y comer al paso)
+// - Validaciones avanzadas de piezas (enroque y comer al paso)
 // - Deteccion de Jaque y Jaque mate
 // - Deteccion de Tablas por repeticion
 // - Deteccion de Tablas por falta de piezas
 // - Separacion de capa de presentacion y logica de negocio
 // - Lista con los movimientos realizados utilizando notacion algebraica:
 //   https://www.chess.com/es/article/view/notacion-de-ajedrez-el-lenguaje-del-ajedrez
-//
-// Motivo: necesidad de utilizar vectores y/o operar sobre una matriz
-//
-// Adicionalmente a lo visto en el curso se incluye:
-//
-// - Uso de una matriz como tablero
 //
 
 const RANK_8 = 0;
@@ -78,6 +72,10 @@ class Board {
         return board.matrix[row][column].piece;
     }
 
+    isValidMovement(piece, x1, y1, x2, y2) {
+        return piece.isValidMovement(x1, y1, x2, y2);
+    }
+
     move(piece, column, row) {
         this.matrix[row][column].piece = piece;
         this.matrix[piece.cell.x][piece.cell.y].piece = null;
@@ -128,6 +126,7 @@ class Cell {
 
 class Piece {
     symbol = "";
+    firstMove = true;
 
     constructor(color, cell) {
         this.color = color;
@@ -145,30 +144,66 @@ class Piece {
     print() {
         return ` ${this.symbolByColor()} `;
     }
+
+    isValidMovement() {
+        return undefined;
+    }
+
+    moved() {
+        this.firstMove = false;
+    }
 }
 
 class Pawn extends Piece {
     symbol = "P";
+
+
+    isValidMovement(x1, y1, x2, y2) {
+        if (this.color === PieceColor.WHITE) {
+            return (x2 === (x1 - 1) && (y1 === y2)) || (x2 === (x1 - 2) && (y1 === y2) && this.firstMove);
+        }
+        return (x2 === (x1 + 1) && (y1 === y2)) || (x2 === (x1 + 2) && (y1 === y2) && this.firstMove);
+    }
 }
 
 class Knight extends Piece {
     symbol = "N";
+
+    isValidMovement(x1, y1, x2, y2) {
+        return Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2) === 5;
+    }
 }
 
 class Rook extends Piece {
     symbol = "R";
+
+    isValidMovement(x1, y1, x2, y2) {
+        return (x1 === x2) || (y1 === y2);
+    }
 }
 
 class Bishop extends Piece {
     symbol = "B";
+
+    isValidMovement(x1, y1, x2, y2) {
+        return Math.abs(x1 - x2) === Math.abs(y1 - y2);
+    }
 }
 
 class Queen extends Piece {
     symbol = "Q";
+
+    isValidMovement(x1, y1, x2, y2) {
+        return (x1 === x2) || (y1 === y2) || (Math.abs(x1 - x2) === Math.abs(y1 - y2));
+    }
 }
 
 class King extends Piece {
     symbol = "K";
+
+    isValidMovement(x1, y1, x2, y2) {
+        return (Math.abs(f1 - f2) <= 1) && (Math.abs(c1 - c2) <= 1);
+    }
 }
 
 // La inicializacion del tablero se realizara luego utilizando notacion FEN.
@@ -261,9 +296,15 @@ while (!exit) {
                 const destiny = promptCoordinates(`Select where to move ${piece.constructor.name}`);
 
                 if (destiny !== '') {
-                    board.move(piece, destiny.column, destiny.row);
-                    console.clear();
-                    board.print();
+                    if (!board.isValidMovement(piece, piecePosition.row, piecePosition.column, destiny.row, destiny.column)) {
+                        logError("INVALID MOVEMENT!");
+                        color = switchTurn(color); // Force to try again
+                    } else {
+                        board.move(piece, destiny.column, destiny.row);
+                        piece.moved() // mark piece as moved
+                        console.clear();
+                        board.print();
+                    }
                 } else {
                     exit = true;
                 }
