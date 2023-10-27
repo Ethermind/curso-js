@@ -1,0 +1,129 @@
+.notes {
+    background-color: beige;
+    padding: 6px;
+    margin: 6px;
+}
+
+.board-container {
+    display: flex;
+    flex-wrap: wrap;
+    width: 528px;
+    flex-grow: 1;
+}
+
+.cell-black {
+    background-color: darkgray;
+    border: 1px solid black;
+    color: white;
+    width: 64px;
+    height: 64px;
+}
+
+.cell-white {
+    background-color: white;
+    border: 1px solid black;
+    color: black;
+    width: 64px;
+    height: 64px;
+}
+
+.cell-top {
+    height: 70%;
+}
+
+.cell-bottom {
+    height: 30%;
+    text-align: right;
+}
+
+/* BLACK PIECES */
+
+.piece-bR {
+    background-image: url("../assets/img/bR.png");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+
+.piece-bN {
+    background-image: url("../assets/img/bN.png");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+
+.piece-bB {
+    background-image: url("../assets/img/bB.png");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+
+.piece-bQ {
+    background-image: url("../assets/img/bQ.png");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+
+.piece-bK {
+    background-image: url("../assets/img/bK.png");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+
+.piece-bP {
+    background-image: url("../assets/img/bP.png");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+
+/* WHITE PIECES */
+
+.piece-wR {
+    background-image: url("../assets/img/wR.png");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+
+.piece-wN {
+    background-image: url("../assets/img/wN.png");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+
+.piece-wB {
+    background-image: url("../assets/img/wB.png");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+
+.piece-wQ {
+    background-image: url("../assets/img/wQ.png");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+
+.piece-wK {
+    background-image: url("../assets/img/wK.png");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+
+.piece-wP {
+    background-image: url("../assets/img/wP.png");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+
+
+
+

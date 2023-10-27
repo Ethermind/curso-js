@@ -3,10 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/styles.css">
     <script defer src="scripts/script.js"></script>
     <title>Chess</title>
 </head>
 <body>
+    <div id="root" class="board-container"></div>
+
+    <div class="notes">
+        <div>Se debera ingresar la coordenada de la pieza y el destino de la misma en un segundo prompt</div>
+        <div>Ejemplo:</div>
+        <div>Al iniciar, ingresando e2 se selecciona el peon de rey.</div>
+        <div>Luego, seleccionando e4 lo movera a la casilla indicada.</div>
+    </div>
+
+    <form action="#">
+        <div>
+            <label for="source">Source:</label>
+            <input type="text" name="source" id="source">
+        </div>
+        <div>
+            <label for="source">Target:</label>
+            <input type="text" name="target" id="target">
+        </div>
+        <div>
+            <input type="button" value="Move" id="button">
+        </div>
+    </form>
+
 
 </body>
 </html>

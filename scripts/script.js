@@ -24,15 +24,6 @@ const RANK_7 = 1;
 const RANK_2 = 6;
 const RANK_1 = 7;
 
-
-const logInfo = (text) => {
-    console.log(`%c${text}`, "font-family: 'Courier New', Courier, monospace");
-}
-
-const logError = (text) => {
-    console.log(`%c${text}`, "color: red");
-}
-
 const letterToColumn = {
     a: 0,
     b: 1,
@@ -86,26 +77,6 @@ class Board {
     addPiece(class_piece, color, x, y) {
         this.matrix[x][y].piece = new class_piece(color, this.matrix[x][y]);
     }
-
-    print() {
-        for (let i = 0; i < BoardSize.ROWS; i++) {
-            logInfo("  ---------------------------------");
-            logInfo(this.printableRank(i));
-        }
-
-        logInfo("  ---------------------------------");
-        logInfo("    a   b   c   d   e   f   g   h  ");
-    }
-
-    printableRank(row) {
-        let result = "|";
-
-        for (let j = 0; j < BoardSize.COLS; j++) {
-            result = result + this.matrix[row][j].print() + "|";
-        }
-
-        return `${8 - row} ${result}`;
-    }
 }
 
 class Cell {
@@ -116,11 +87,8 @@ class Cell {
         this.piece = null;
     }
 
-    print() {
-        if (this.piece !== null) {
-            return this.piece.print();
-        }
-        return "   ";
+    hasPiece(){
+        return this.piece === null;
     }
 }
 
@@ -133,16 +101,9 @@ class Piece {
         this.cell = cell;
     }
 
-    symbolByColor() {
-        if (this.color === PieceColor.WHITE) {
-            return this.symbol.toUpperCase();
-        }
-
-        return this.symbol.toLowerCase();
-    }
-
-    print() {
-        return ` ${this.symbolByColor()} `;
+    className(){
+        const color = this.color === PieceColor.WHITE ? "w" : "b";
+        return `piece-${color}${this.symbol}`;
     }
 
     isValidMovement() {
@@ -156,7 +117,6 @@ class Piece {
 
 class Pawn extends Piece {
     symbol = "P";
-
 
     isValidMovement(x1, y1, x2, y2) {
         if (this.color === PieceColor.WHITE) {
@@ -242,13 +202,11 @@ function validCoordinates(text) {
     return pattern.test(text);
 }
 
-function promptCoordinates(text) {
-    const piecePosition = prompt(text);
-
-    if (validCoordinates(piecePosition)) {
+function coordinates(text) {
+    if (validCoordinates(text)) {
         return {
-            column: letterToColumn[piecePosition[0]],
-            row: 8 - parseInt(piecePosition[1]),
+            column: letterToColumn[text[0]],
+            row: 8 - parseInt(text[1]),
         }
     }
 
@@ -259,6 +217,65 @@ function switchTurn(color) {
     return (color === PieceColor.WHITE) ? PieceColor.BLACK : PieceColor.WHITE;
 }
 
+class HTMLBoard {
+    constructor(root, board) {
+        this.board = board;
+        this.matrix = this.board.matrix;
+    }
+
+    createCell(rank, column, className, piece){
+        const cell = document.createElement("div");
+        const top = document.createElement("div");
+        const bottom = document.createElement("div");
+
+        top.classList.add("cell-top");
+        top.textContent = rank;
+
+        bottom.classList.add("cell-bottom");
+        bottom.textContent = column;
+
+        cell.appendChild(top);
+        cell.appendChild(bottom);
+        cell.classList.add(className);
+
+        if(piece !== null){
+            cell.classList.add(piece.className())
+        }
+
+        return cell;
+    }
+
+    clear() {
+        root.innerHTML = "";
+    }
+
+    render(){
+        for(let i=0; i<8; i++){
+            for(let j=0; j<8; j++){
+                let rank = "";
+                let column = "";
+                let cell = undefined;
+
+                if(j===0){
+                    rank = 8-i;
+                }
+
+                if(i===7){
+                    column = String.fromCharCode(65+j).toLowerCase();
+                }
+
+                if((i+j)%2 === 0){
+                    cell = this.createCell(rank, column, "cell-white", this.matrix[i][j].piece);
+                } else {
+                    cell = this.createCell(rank, column, "cell-black", this.matrix[i][j].piece);
+                }
+
+                root.append(cell);
+            }
+        }
+    }
+}
+
 //-----------------------------------------------------------------------------------------------------
 //
 // GAME SIMULATOR
@@ -266,57 +283,45 @@ function switchTurn(color) {
 //-----------------------------------------------------------------------------------------------------
 
 const board = buildBoard();
+const root = document.querySelector("#root");
+const move = document.querySelector("#button");
+
+new HTMLBoard(root, board).render();
 let exit = false;
 let color = PieceColor.WHITE;
-const instructions = `
 
-Se debera ingresar la coordenada de la pieza y el destino de la misma en un segundo prompt
-Ejemplo:
-Al iniciar, ingresando e2 se selecciona el peon de rey.
-Luego, seleccionando e4 lo movera a la casilla indicada.
+move.addEventListener("click", ()=>{
+    const source = coordinates(document.querySelector("#source").value);
+    const target = coordinates(document.querySelector("#target").value);
 
-`;
-
-alert(instructions);
-console.clear();
-board.print();
-
-// GAME LOOP
-while (!exit) {
-    const piecePosition = promptCoordinates("Select piece");
-
-    if (piecePosition !== null) {
-        const piece = board.piece(piecePosition.column, piecePosition.row);
-
-        if (piece === null) {
-            logError("Cell is empty!");
-        }
-        else {
-            if (piece.color === color) {
-                const destiny = promptCoordinates(`Select where to move ${piece.constructor.name}`);
-
-                if (destiny !== '') {
-                    if (!board.isValidMovement(piece, piecePosition.row, piecePosition.column, destiny.row, destiny.column)) {
-                        logError("INVALID MOVEMENT!");
-                        color = switchTurn(color); // Force to try again
-                    } else {
-                        board.move(piece, destiny.column, destiny.row);
-                        piece.moved() // mark piece as moved
-                        console.clear();
-                        board.print();
-                    }
-                } else {
-                    exit = true;
-                }
-
-                color = switchTurn(color);
-            } else {
-                logError(`Incorrect turn for ${piece.color}!`);
-            }
-        }
-    } else {
-        exit = true;
+    if(source===null){
+        alert("source incorrecto");
     }
-}
 
-logInfo("GAME OVER");
+    if(target===null){
+        alert("target incorrecto");
+    }
+
+    const piece = board.piece(source.column, source.row);
+
+    if(piece===null){
+        alert("no hay pieza");
+    }
+
+    if (piece.color !== color) {
+        alert("invalid color");
+    }
+
+    if (!board.isValidMovement(piece, source.row, source.column, target.row, target.column)) {
+        alert("INVALID MOVEMENT!");
+        color = switchTurn(color); // Force to try again
+    } else {
+        board.move(piece, target.column, target.row);
+        piece.moved() // mark piece as moved
+        new HTMLBoard(root, board).clear();
+        new HTMLBoard(root, board).render();
+    }
+    color = switchTurn(color);
+
+});
+
