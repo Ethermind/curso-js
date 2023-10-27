@@ -46,6 +46,8 @@ const PieceColor = {
 }
 
 class Board {
+    moves = Array();
+
     constructor() {
         let m = [];
 
@@ -72,6 +74,13 @@ class Board {
         this.matrix[piece.cell.x][piece.cell.y].piece = null;
         piece.cell.x = row;
         piece.cell.y = column;
+
+        this.moves.push({piece, column, row});
+    }
+
+    store(){
+        localStorage.clear();
+        localStorage.setItem("MOVES", this.moves);
     }
 
     addPiece(class_piece, color, x, y) {
@@ -284,36 +293,49 @@ class HTMLBoard {
 
 const board = buildBoard();
 const root = document.querySelector("#root");
-const move = document.querySelector("#button");
-
+const move = document.querySelector("#move");
+const store = document.querySelector("#store");
 new HTMLBoard(root, board).render();
+const toast = new Toasty();
 let exit = false;
 let color = PieceColor.WHITE;
+
+store.addEventListener("click", ()=>{
+    board.store();
+    toast.info("Movements stored for future usage! :)");
+});
 
 move.addEventListener("click", ()=>{
     const source = coordinates(document.querySelector("#source").value);
     const target = coordinates(document.querySelector("#target").value);
 
+    document.querySelector("#source").value = "";
+    document.querySelector("#target").value = "";
+
     if(source===null){
-        alert("source incorrecto");
+        toast.error("Wrong source coordinate!");
+        return;
     }
 
     if(target===null){
-        alert("target incorrecto");
+        toast.error("Wrong target coordinate!");
+        return;
     }
 
     const piece = board.piece(source.column, source.row);
 
     if(piece===null){
-        alert("no hay pieza");
+        toast.error("No piece selected!");
+        return;
     }
 
     if (piece.color !== color) {
-        alert("invalid color");
+        toast.error("Invalid turn!");
+        return;
     }
 
     if (!board.isValidMovement(piece, source.row, source.column, target.row, target.column)) {
-        alert("INVALID MOVEMENT!");
+        toast.info("Invalid movement!");
         color = switchTurn(color); // Force to try again
     } else {
         board.move(piece, target.column, target.row);
@@ -322,6 +344,5 @@ move.addEventListener("click", ()=>{
         new HTMLBoard(root, board).render();
     }
     color = switchTurn(color);
-
 });
 
