@@ -14,7 +14,6 @@
 // - Deteccion de Jaque y Jaque mate
 // - Deteccion de Tablas por repeticion
 // - Deteccion de Tablas por falta de piezas
-// - Separacion de capa de presentacion y logica de negocio
 // - Lista con los movimientos realizados utilizando notacion algebraica:
 //   https://www.chess.com/es/article/view/notacion-de-ajedrez-el-lenguaje-del-ajedrez
 //
@@ -128,6 +127,15 @@ class Pawn extends Piece {
     symbol = "P";
 
     isValidMovement(x1, y1, x2, y2) {
+        // check if we have a piece to capture!
+        if(this.cell.board.matrix[x2][y2].piece !== null){
+            if(this.cell.board.matrix[x2][y2].piece.color !== this.color) {
+                if((Math.abs(x2-x1)+Math.abs(y2-y1)) === 2){ //TODO: check this logic
+                    return true;
+                }
+            }
+        }
+
         if (this.color === PieceColor.WHITE) {
             return (x2 === (x1 - 1) && (y1 === y2)) || (x2 === (x1 - 2) && (y1 === y2) && this.firstMove);
         }
